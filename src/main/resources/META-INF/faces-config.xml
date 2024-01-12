@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
+              version="2.1">
+
+    <application>
+        <!--locale-config>
+            <default-locale>en</default-locale>
+            <supported-locale>en</supported-locale>
+            <supported-locale>nl</supported-locale>
+            <supported-locale>fr</supported-locale>
+        </locale-config>
+        <resource-bundle>
+            <base-name>be.e_contract.ejsf.Messages</base-name>
+            <var>ejsfMessages</var>
+        </resource-bundle>
+        <system-event-listener>
+            <system-event-listener-class>be.e_contract.ejsf.PostConstructApplicationEventListener</system-event-listener-class>
+            <system-event-class>javax.faces.event.PostConstructApplicationEvent</system-event-class>
+            <source-class>javax.faces.application.Application</source-class>
+        </system-event-listener-->
+    </application>
+
+    <component>
+        <component-type>br.com.feliva.defs.components.DOutPut</component-type>
+        <component-class>br.com.feliva.defs.components.dOutPut.DOutPut</component-class>
+    </component>
+
+    <component>
+        <component-type>br.com.feliva.component.kamban</component-type>
+        <component-class>br.com.feliva.defs.components.kamban.Kamban</component-class>
+    </component>
+
+    <render-kit>
+        <renderer>
+            <component-family>br.com.feliva.defs.components</component-family>
+            <renderer-type>br.com.feliva.defs.components.DOutPutRenderer</renderer-type>
+            <renderer-class>br.com.feliva.defs.components.dOutPut.DOutPutRenderer</renderer-class>
+        </renderer>
+
+        <renderer>
+            <component-family>br.com.feliva.defs.components</component-family>
+            <renderer-type>br.com.feliva.defs.components.kambanRenderer</renderer-type>
+            <renderer-class>br.com.feliva.defs.components.kamban.KambanRenderer</renderer-class>
+        </renderer>
+
+        <client-behavior-renderer>
+            <client-behavior-renderer-type>org.primefaces.component.AjaxBehaviorRenderer</client-behavior-renderer-type>
+            <client-behavior-renderer-class>org.primefaces.behavior.ajax.AjaxBehaviorRenderer</client-behavior-renderer-class>
+        </client-behavior-renderer>
+    </render-kit>
+
+
+</faces-config>
