@@ -1,18 +1,23 @@
 package org.feliva.tokenizer;
 
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.channels.Channels;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Parser {
 
-    void readerFile(Path path) throws IOException {
+    CaracterReader reader;
 
-        FileReader buffer = new FileReader(path.toFile());
-        int cr = 0;
-        do {
-            cr = buffer.read();
-            System.out.println((char)cr);
-        }while (cr != -1);
+    public void readerFile(Path path) throws IOException {
+        this.reader = new CaracterReader(path);
+        char caracter = 0;
+
+//        do{
+//            caracter= reader.read();
+//            System.out.println(caracter);
+//        }while (caracter >0);
     }
 }

@@ -6,6 +6,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.feliva.tokenizer.Parser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,12 +36,14 @@ public class DefsServelet implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
         URL folder = getClass().getClassLoader().getResource("defs_view");//funcona
         try {
 //            this.listFilesUsingDirectoryStream(folder);
             listFiles(Path.of(folder.toURI())).forEach(path -> {
                 try {
-                    readerFile(path);
+                    new Parser().readerFile(path);
+                    Document doc = Jsoup.parse(path.toFile(), "UTF-8", "http://example.com/");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
