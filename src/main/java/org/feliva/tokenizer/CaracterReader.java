@@ -14,29 +14,37 @@ public class CaracterReader {
     InputStream stream;
     Reader reader;
 
-    char[] charBuffer = new char[8096];
+    static final int BUFFER_SIZE = 8096;
+
+    int bufLength = 0;
+    boolean finish = false;
+
+    int indexRead = 0;
+    char[] charBuffer = new char[BUFFER_SIZE];
 
     CaracterReader(Path path) throws IOException {
         this.byteChannel = Files.newByteChannel(path);
         this.stream = Channels.newInputStream(byteChannel);
         this.reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-//        new Chara
+        this.readToBuffer();
+    }
 
+    public void readToBuffer() throws IOException {
+
+        while (bufLength < BUFFER_SIZE) {
+            int read = reader.read(charBuffer, bufLength, BUFFER_SIZE);
+            if (read == -1) {
+                finish = true;
+                break;
+            }
+            bufLength += read;
+        }
     }
 
     public char read() throws IOException {
-
-        while (bufLength < BufferSize) {
-            try {
-                int read = reader.read(charBuffer, 8096, charBuf.length - bufLength);
-                if (read == -1) {
-                    readFully = true;
-                    break;
-                }
-                bufLength += read;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+        if(indexRead >= BUFFER_SIZE){
+            this.readToBuffer();
         }
+        return charBuffer[indexRead];
     }
 }

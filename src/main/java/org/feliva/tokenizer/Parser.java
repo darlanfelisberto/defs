@@ -13,11 +13,9 @@ public class Parser {
 
     public void readerFile(Path path) throws IOException {
         this.reader = new CaracterReader(path);
-        char caracter = 0;
+    }
 
-//        do{
-//            caracter= reader.read();
-//            System.out.println(caracter);
-//        }while (caracter >0);
+    public void parse(){
+
     }
 }
