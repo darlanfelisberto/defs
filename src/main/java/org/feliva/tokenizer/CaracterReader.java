@@ -32,12 +32,19 @@ public class CaracterReader {
     public void readToBuffer() throws IOException {
 
         while (bufLength < BUFFER_SIZE) {
-            int read = reader.read(charBuffer, bufLength, BUFFER_SIZE);
+            int read = reader.read(charBuffer,bufLength,BUFFER_SIZE-bufLength);
             if (read == -1) {
-                finish = true;
+                this.finish = true;
                 break;
             }
             bufLength += read;
+        }
+    }
+
+    private void bufferUp() throws IOException {
+        if (!this.finish && this.indexRead > BUFFER_SIZE) {
+            this.readToBuffer();
+            this.indexRead = 0;
         }
     }
 
@@ -46,5 +53,105 @@ public class CaracterReader {
             this.readToBuffer();
         }
         return charBuffer[indexRead];
+    }
+
+    public char current(){
+        return charBuffer[indexRead];
+    }
+
+    public char consome(){
+        return charBuffer[indexRead++];
+    }
+
+    boolean matchConsume(String seq) {
+//        this.bufferUp();
+        if (this.matches(seq)) {
+            this.indexRead += seq.length();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    boolean matches(String seq) {
+//        this.bufferUp();
+        int scanLength = seq.length();
+        if (scanLength > this.bufLength - this.indexRead) {
+            return false;
+        } else {
+            for(int offset = 0; offset < scanLength; ++offset) {
+                if (seq.charAt(offset) != this.charBuffer[this.indexRead + offset]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public void advance() {
+        ++this.indexRead;
+    }
+
+    String consumeData() {
+        int pos = this.indexRead;
+        int start = pos;
+        int remaining = this.bufLength;
+        char[] val = this.charBuffer;
+
+        label21:
+        while(pos < remaining) {
+            switch (val[pos]) {
+                case '\u0000':
+                case '&':
+                case '<':
+                    break label21;
+                default:
+                    ++pos;
+            }
+        }
+
+        this.indexRead = pos;
+        return pos > start ? new String(val, start, pos - start) : "";
+    }
+
+    boolean matchConsumeIgnoreCase(String seq) {
+        if (this.matchesIgnoreCase(seq)) {
+            this.indexRead += seq.length();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    boolean matchesIgnoreCase(String seq) {
+//        this.bufferUp();
+        int scanLength = seq.length();
+        if (scanLength > this.bufLength - this.indexRead) {
+            return false;
+        } else {
+            for(int offset = 0; offset < scanLength; ++offset) {
+                char upScan = Character.toUpperCase(seq.charAt(offset));
+                char upTarget = Character.toUpperCase(this.charBuffer[this.indexRead + offset]);
+                if (upScan != upTarget) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public boolean isEmpty() {
+//        this.bufferUp();
+        return this.indexRead >= this.bufLength;
+    }
+
+    boolean matchesAsciiAlpha() {
+        if (this.isEmpty()) {
+            return false;
+        } else {
+            char c = this.charBuffer[this.indexRead];
+            return c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z';
+        }
     }
 }
