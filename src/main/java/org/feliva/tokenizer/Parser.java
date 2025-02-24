@@ -10,12 +10,16 @@ import java.nio.file.Path;
 public class Parser {
 
     CaracterReader reader;
+    Tokeniser tokeniser;
 
     public void readerFile(Path path) throws IOException {
         this.reader = new CaracterReader(path);
+        this.tokeniser = new Tokeniser(this.reader);
     }
 
     public void parse(){
-
+        do{
+            this.tokeniser.state.read(this.tokeniser,this.reader);
+        }while (this.reader.current() != 0);
     }
 }

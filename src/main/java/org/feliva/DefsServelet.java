@@ -42,8 +42,12 @@ public class DefsServelet implements Filter {
 //            this.listFilesUsingDirectoryStream(folder);
             listFiles(Path.of(folder.toURI())).forEach(path -> {
                 try {
-                    new Parser().readerFile(path);
-                    Document doc = Jsoup.parse(path.toFile(), "UTF-8", "http://example.com/");
+                    Parser p = new Parser();
+                    p.readerFile(path);
+                    p.parse();
+                    Document doc = Jsoup.parse(path.toFile(), "UTF-8");
+
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

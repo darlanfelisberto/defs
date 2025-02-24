@@ -8,11 +8,16 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CaracterReader {
     SeekableByteChannel byteChannel;
     InputStream stream;
     Reader reader;
+
+    Map<String,String> cache = new HashMap<>();
 
     static final int BUFFER_SIZE = 8096;
 
@@ -71,6 +76,9 @@ public class CaracterReader {
         } else {
             return false;
         }
+    }
+    boolean matches(char c) {
+        return !this.isEmpty() && this.charBuffer[this.indexRead] == c;
     }
 
     boolean matches(String seq) {
@@ -154,4 +162,214 @@ public class CaracterReader {
             return c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z';
         }
     }
+
+    int nextIndexOf(CharSequence seq) {
+//        this.bufferUp();
+        char startChar = seq.charAt(0);
+
+        for(int offset = this.indexRead; offset < this.bufLength; ++offset) {
+            if (startChar != this.charBuffer[offset]) {
+                do {
+                    ++offset;
+                } while(offset < this.bufLength && startChar != this.charBuffer[offset]);
+            }
+
+            int i = offset + 1;
+            int last = i + seq.length() - 1;
+            if (offset < this.bufLength && last <= this.bufLength) {
+                for(int j = 1; i < last && seq.charAt(j) == this.charBuffer[i]; ++j) {
+                    ++i;
+                }
+
+                if (i == last) {
+                    return offset - this.indexRead;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    String consumeTo(String seq) {
+//        int offset = this.nextIndexOf(seq);
+//        if (offset != -1) {
+//            String consumed = cacheString(this.charBuf, this.stringCache, this.bufPos, offset);
+//            this.bufPos += offset;
+//            return consumed;
+//        } else if (this.bufLength - this.bufPos < seq.length()) {
+//            return this.consumeToEnd();
+//        } else {
+//            int endPos = this.bufLength - seq.length() + 1;
+//            String consumed = cacheString(this.charBuf, this.stringCache, this.bufPos, endPos - this.bufPos);
+//            this.bufPos = endPos;
+//            return consumed;
+//        }
+        return "";
+    }
+
+    char consume() {
+//        this.bufferUp();
+        char val = this.isEmptyNoBufferUp() ? '\uffff' : this.charBuffer[this.indexRead];
+        ++this.indexRead;
+        return val;
+    }
+
+    private boolean isEmptyNoBufferUp() {
+        return this.indexRead >= this.bufLength;
+    }
+
+    void unconsume() {
+        if (this.indexRead < 1) {
+            throw new UncheckedIOException(new IOException("WTF: No buffer left to unconsume."));
+        } else {
+            --this.indexRead;
+        }
+    }
+    String consumeTagName() {
+//        this.bufferUp();
+        int pos = this.indexRead;
+        int start = pos;
+        int remaining = this.bufLength;
+        char[] val = this.charBuffer;
+
+        label21:
+        while(pos < remaining) {
+            switch (val[pos]) {
+                case '\t':
+                case '\n':
+                case '\f':
+                case '\r':
+                case ' ':
+                case '/':
+                case '>':
+                    break label21;
+                default:
+                    ++pos;
+            }
+        }
+
+        this.indexRead = pos;
+
+        return pos > start ? new String(this.charBuffer, start, pos - start) : "";
+    }
+
+    String defsConsumeAtributeName() {
+//        this.bufferUp();
+        int pos = this.indexRead;
+        int start = pos;
+        int remaining = this.bufLength;
+        char[] val = this.charBuffer;
+
+        label21:
+        while(pos < remaining) {
+            switch (val[pos]) {
+                case '(':
+                case '\n':
+                case '\f':
+                case '\r':
+                case ' ':
+                case '/':
+                case '>':
+                    break label21;
+                default:
+                    ++pos;
+            }
+        }
+
+        this.indexRead = pos;
+
+        return pos > start ? new String(this.charBuffer, start, pos - start) : "";
+    }
+
+    String defsConsumeAtributeValue() {
+//        this.bufferUp();
+        int pos = this.indexRead;
+        int start = pos;
+        int remaining = this.bufLength;
+        char[] val = this.charBuffer;
+
+        label21:
+        while(pos < remaining) {
+            switch (val[pos]) {
+                case ')':
+                    break label21;
+                default:
+                    ++pos;
+            }
+        }
+
+        this.indexRead = pos;
+
+        return pos > start ? new String(this.charBuffer, start, pos - start) : "";
+    }
+
+
+    String consumeToAnySorted(char... chars) {
+//        this.bufferUp();
+        int pos = this.indexRead;
+        int start = pos;
+        int remaining = this.bufLength;
+
+        for(char[] val = this.charBuffer; pos < remaining && Arrays.binarySearch(chars, val[pos]) < 0; ++pos) {
+        }
+
+        this.indexRead = pos;
+        return this.indexRead > start ? cacheString(this.charBuffer, start, pos - start) : "";
+    }
+
+    String consumeAttributeQuoted(boolean single) {
+        int pos = this.indexRead;
+        int start = pos;
+        int remaining = this.bufLength;
+
+        label30:
+        for(char[] val = this.charBuffer; pos < remaining; ++pos) {
+            switch (val[pos]) {
+                case '\u0000':
+                case '&':
+                    break label30;
+                case '"':
+                    if (!single) {
+                        break label30;
+                    }
+                    break;
+                case '\'':
+                    if (single) {
+                        break label30;
+                    }
+            }
+        }
+
+        this.indexRead = pos;
+        return pos > start ? cacheString(this.charBuffer, start, pos - start) : "";
+    }
+
+    boolean matchesLetter() {
+        if (this.isEmpty()) {
+            return false;
+        } else {
+            char c = this.charBuffer[this.indexRead];
+            return c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || Character.isLetter(c);
+        }
+    }
+
+    String consumeLetterSequence() {
+//        this.bufferUp();
+
+        int start;
+        for(start = this.indexRead; this.indexRead < this.bufLength; ++this.indexRead) {
+            char c = this.charBuffer[this.indexRead];
+            if ((c < 'A' || c > 'Z') && (c < 'a' || c > 'z') && !Character.isLetter(c)) {
+                break;
+            }
+        }
+
+        return cacheString(this.charBuffer,  start, this.indexRead - start);
+    }
+
+    private static String cacheString(char[] charBuf, int start, int count) {
+        return new String(charBuf, start, count);
+    }
+
+
 }
