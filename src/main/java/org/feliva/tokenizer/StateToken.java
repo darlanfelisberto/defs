@@ -24,11 +24,46 @@ public enum StateToken {
                 case '\uffff':
 //                    t.emit(new Token.EOF());
                     break;
+                case '#':
+                    t.createDefsBlock();
+                    t.advanceTransition(DefsName);
+                    break;
                 default:
                     String data = r.consumeData();
                     t.emitData(data);
             }
 
+        }
+    },
+    DefsBloco{
+        void read(Tokeniser t, CaracterReader r) {
+            switch (r.current()) {
+                case '{':
+                    t.advanceTransition(DefsExpression);
+                    break;
+                case '}':
+                    t.emitCurrentTag();
+                    t.advanceTransition(Data);
+                    break;
+                default:
+                    t.transition(Data);
+                    break;
+            }
+        }
+    },
+    DefsName{
+        void read(Tokeniser t, CaracterReader r) {
+            String name = r.defsConsumeName();
+            DefsTag current = (DefsTag) t.current;
+            t.current.setName(name);
+            t.transition(DefsBloco);
+        }
+    },
+    DefsExpression{
+        void read(Tokeniser t, CaracterReader r) {
+            DefsTag current = (DefsTag) t.current;
+            current.setExpression(t.reader.defsConsumeExpression());
+            t.transition(DefsBloco);
         }
     },
     TagOpen {
@@ -333,7 +368,7 @@ public enum StateToken {
         void read(Tokeniser t, CaracterReader r) {
             char c = r.consume();
             switch (c) {
-                case '@'://defs function
+                case '#'://defs function
                     t.createDefsAttribute();
                     t.transition(DefsAttributeName);
                     break;
@@ -377,10 +412,10 @@ public enum StateToken {
     },
     DefsAttributeName{
         void read(Tokeniser t, CaracterReader r) {
-            String name = r.defsConsumeAtributeName();
+            String name = r.defsConsumeName();
             t.defsAttribute.nome = name;
             switch (r.consume()){
-                case '(':
+                case '=':
                     t.transition(DefsAttributeValue);
                     break;
                 case '\u0000':
@@ -414,24 +449,29 @@ public enum StateToken {
     },
     DefsAttributeValue {
         void read(Tokeniser t, CaracterReader r) {
-            String value = r.defsConsumeAtributeValue();
-            t.defsAttribute.value = value;
             switch (r.consume()){
-                case ')':
+                case '"':
+                    String value = r.defsConsumeExpression();
+                    t.defsAttribute.value = value;
                     t.emitDefsAttribute();
-                    t.transition(BeforeAttributeName);
+                    t.advanceTransition(BeforeAttributeName);
+                    break;
+                case '\'':
+                    //erro é obrigatorio doublequote
                     break;
                 case '/':
                     t.transition(SelfClosingStartTag);
                     break;
                 case '>':
-//                    t.emitTagPending();
+                    t.emitCurrentTag();
                     t.transition(Data);
                     break;
                 case '\uffff':
 //                    t.eofError(this);
                     t.transition(Data);
                     break;
+                default:
+
 
             }
         }

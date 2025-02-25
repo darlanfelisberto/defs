@@ -106,6 +106,11 @@ public class Tokeniser {
         }
     }
 
+    public void createDefsBlock(){
+        this.current = new DefsTag();
+        this.isOpen = true;
+    }
+
     public void emitDefsAttribute(){
         this.current.addDefsAttribute(this.defsAttribute);
         this.defsAttribute = null;

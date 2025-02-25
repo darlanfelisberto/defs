@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Tag {
-    private String name;
-    private String data;
-    private Map<String, String> attributes = new HashMap<String, String>();
-    private List<DefsAttribute> defsAttributes = new ArrayList<>();
-    private List<Tag> children = new ArrayList<Tag>();
-    private Tag parent;
+    protected String name;
+    protected String data;
+    protected Map<String, String> attributes = new HashMap<String, String>();
+    protected List<DefsAttribute> defsAttributes = new ArrayList<>();
+    protected List<Tag> children = new ArrayList<Tag>();
+    protected Tag parent;
 
     public Tag() {
     }
@@ -66,5 +66,8 @@ public class Tag {
         this.data = data;
     }
 
-
+    @Override
+    public String toString() {
+        return name;
+    }
 }

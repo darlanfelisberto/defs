@@ -113,6 +113,7 @@ public class CaracterReader {
                 case '\u0000':
                 case '&':
                 case '<':
+                case '#'://defs
                     break label21;
                 default:
                     ++pos;
@@ -253,7 +254,7 @@ public class CaracterReader {
         return pos > start ? new String(this.charBuffer, start, pos - start) : "";
     }
 
-    String defsConsumeAtributeName() {
+    String defsConsumeName() {
 //        this.bufferUp();
         int pos = this.indexRead;
         int start = pos;
@@ -263,7 +264,8 @@ public class CaracterReader {
         label21:
         while(pos < remaining) {
             switch (val[pos]) {
-                case '(':
+                case '=':
+                case '{':
                 case '\n':
                 case '\f':
                 case '\r':
@@ -281,7 +283,7 @@ public class CaracterReader {
         return pos > start ? new String(this.charBuffer, start, pos - start) : "";
     }
 
-    String defsConsumeAtributeValue() {
+    String defsConsumeExpression() {
 //        this.bufferUp();
         int pos = this.indexRead;
         int start = pos;
@@ -291,7 +293,8 @@ public class CaracterReader {
         label21:
         while(pos < remaining) {
             switch (val[pos]) {
-                case ')':
+                case '"':
+                case '}':
                     break label21;
                 default:
                     ++pos;
@@ -370,6 +373,4 @@ public class CaracterReader {
     private static String cacheString(char[] charBuf, int start, int count) {
         return new String(charBuf, start, count);
     }
-
-
 }
