@@ -130,4 +130,8 @@ public class Tokeniser {
         this.current = new Tag();
         this.isOpen = open;
     }
+
+    public void addIndexDefs(){
+        this.document.addIndexDef(this.current);
+    }
 }

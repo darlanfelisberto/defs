@@ -17,9 +17,13 @@ public class Parser {
         this.tokeniser = new Tokeniser(this.reader);
     }
 
-    public void parse(){
+    public Document parse(){
         do{
             this.tokeniser.state.read(this.tokeniser,this.reader);
         }while (this.reader.current() != 0);
+
+        return tokeniser.document;
     }
+
+
 }
