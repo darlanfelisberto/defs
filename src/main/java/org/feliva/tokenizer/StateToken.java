@@ -371,7 +371,6 @@ public enum StateToken {
             switch (c) {
                 case '#'://defs function
                     t.createDefsAttribute();
-                    t.addIndexDefs();
                     t.transition(DefsAttributeName);
                     break;
                 case '\u0000':

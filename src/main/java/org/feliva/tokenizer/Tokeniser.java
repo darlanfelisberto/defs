@@ -109,6 +109,7 @@ public class Tokeniser {
     public void createDefsBlock(){
         this.current = new DefsTag();
         this.isOpen = true;
+        this.addIndexDefs();
     }
 
     public void emitDefsAttribute(){
@@ -118,6 +119,7 @@ public class Tokeniser {
 
     public void createDefsAttribute(){
         this.defsAttribute = new DefsAttribute();
+        this.addIndexDefs();
     }
 
     public void resetCurrent(){
