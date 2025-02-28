@@ -16,4 +16,8 @@ public class Document {
     public void addIndexDef(Tag tag){
         this.indexDef.add(tag);
     }
+
+    public Set<Tag> getIndexDef() {
+        return indexDef;
+    }
 }

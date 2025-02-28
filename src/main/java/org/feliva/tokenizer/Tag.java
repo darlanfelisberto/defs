@@ -66,6 +66,10 @@ public class Tag {
         this.data = data;
     }
 
+    public List<DefsAttribute> getDefsAttributes() {
+        return defsAttributes;
+    }
+
     @Override
     public String toString() {
         return name;

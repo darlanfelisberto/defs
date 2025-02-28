@@ -1,5 +1,6 @@
 package org.feliva;
 
+import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,9 +29,10 @@ import java.util.stream.Stream;
 @WebFilter(urlPatterns = "/defs/*")
 public class DefsServelet implements Filter {
 
+    @Inject RoutesAplications routesAplications;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
         getClass().getClassLoader().getResource("defs_view");//funcona
     }
 
@@ -44,10 +46,9 @@ public class DefsServelet implements Filter {
                 try {
                     Parser p = new Parser();
                     p.readerFile(path);
-                    p.parse();
+                    org.feliva.tokenizer.Document d = p.parse();
+                    routesAplications.processDoc(d);
                     Document doc = Jsoup.parse(path.toFile(), "UTF-8");
-
-
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
