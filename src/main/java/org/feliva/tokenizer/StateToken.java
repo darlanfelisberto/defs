@@ -3,8 +3,6 @@ package org.feliva.tokenizer;
 //https://html.spec.whatwg.org/multipage/parsing.html#data-state
 
 
-import org.jsoup.parser.CharacterReader;
-
 public enum StateToken {
 
 
@@ -414,7 +412,7 @@ public enum StateToken {
     DefsAttributeName{
         void read(Tokeniser t, CaracterReader r) {
             String name = r.defsConsumeName();
-            t.defsAttribute.nome = name;
+            t.defsAttribute.setNome(name);
             switch (r.consume()){
                 case '=':
                     t.transition(DefsAttributeValue);
@@ -453,7 +451,7 @@ public enum StateToken {
             switch (r.consume()){
                 case '"':
                     String value = r.defsConsumeExpression();
-                    t.defsAttribute.value = value;
+                    t.defsAttribute.setValue(value);
                     t.emitDefsAttribute();
                     t.advanceTransition(BeforeAttributeName);
                     break;

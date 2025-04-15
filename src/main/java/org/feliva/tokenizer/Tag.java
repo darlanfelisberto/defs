@@ -40,6 +40,7 @@ public class Tag {
 
     public void addDefsAttribute(DefsAttribute defsAttribute) {
         this.defsAttributes.add(defsAttribute);
+        defsAttribute.setTagParent(this);
     }
 
     public List<Tag> getChildren() {

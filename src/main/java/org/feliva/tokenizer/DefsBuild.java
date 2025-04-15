@@ -14,15 +14,14 @@ public class DefsBuild {
         defsKeyWord.put("route", new RouteFunc());
     }
 
-
     public void processTags(){
 
     }
 
-    public void processAttribute(DefsAttribute attr){
-        ViewFunc func = defsKeyWord.get(attr.nome);
-        if(func != null){
-
-        }
-    }
+//    public void processAttribute(DefsAttribute attr){
+//        ViewFunc func = defsKeyWord.get(attr.nome);
+//        if(func != null){
+//
+//        }
+//    }
 }

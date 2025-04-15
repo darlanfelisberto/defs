@@ -7,7 +7,7 @@ public class Tokeniser {
     StateToken state = StateToken.Data;
     CaracterReader reader;
 
-    Document document = new Document();
+    Document document;
 
     DefsAttribute defsAttribute;
     Tag current;
@@ -16,8 +16,9 @@ public class Tokeniser {
     Stack<Tag> stack = new Stack<>();
 
 
-    public Tokeniser(CaracterReader reader) {
+    public Tokeniser(CaracterReader reader, Document document) {
         this.reader = reader;
+        this.document = document;
     }
 
     void advanceTransition(StateToken newState) {

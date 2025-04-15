@@ -4,23 +4,15 @@ import io.undertow.servlet.spec.HttpServletRequestImpl;
 import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.feliva.tokenizer.Parser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,7 +20,8 @@ import java.util.stream.Stream;
 @WebFilter(urlPatterns = "/*")
 public class DefsServelet implements Filter {
 
-    @Inject RoutesAplications routesAplications;
+    @Inject
+    DefsAplications routesAplications;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -52,7 +45,7 @@ public class DefsServelet implements Filter {
 
             String rr = requestImpl.getRequestURI().substring(requestImpl.getContextPath().length()+1);
 
-            Path requestPath = urlrequest.get(rr);
+            Path requestPath = urlrequest.get("index.html");
 
             if(requestPath == null) {
                 System.out.println("nao encontrado");

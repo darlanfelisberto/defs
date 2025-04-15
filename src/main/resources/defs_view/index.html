@@ -1,11 +1,21 @@
 <html>
 	<head></head>
 	<body>
-		<div #route="/listar">
+		<header #include="header"></header>
+
+		<defs #fragment="fragmento">
+			fragmento
+		</defs>
+
+		<defs #route="/listar">
+			<div #include="fragmento"></div>
 			listar
-		</div>
-		<div #route="/form">
-			listar
-		</div>
+		</defs>
+
+		<defs #route="/editar/{1}">
+			Editar 1
+		</defs>
+
+		<footer #include="footer"></footer>
 	</body>
 </html>
